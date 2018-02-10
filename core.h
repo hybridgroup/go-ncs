@@ -13,6 +13,8 @@ extern "C" {
 int ncs_GetDeviceName(int idx, char* name);
 int ncs_OpenDevice(const char* name, void* deviceHandle);
 int ncs_CloseDevice(void* deviceHandle);
+int ncs_AllocateGraph(void* deviceHandle, void* graphHandle, void* graphData, uint graphDataLen);
+int ncs_DeallocateGraph(void* graphHandle);
 
 #ifdef __cplusplus
 }

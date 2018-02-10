@@ -15,3 +15,13 @@ int ncs_CloseDevice(void* deviceHandle) {
     mvncStatus r = mvncCloseDevice(deviceHandle);
     return int(r);
 }
+
+int ncs_AllocateGraph(void* deviceHandle, void* graphHandle, void* graphData, uint graphDataLen) {
+    mvncStatus r = mvncAllocateGraph(deviceHandle, &graphHandle, graphData, graphDataLen);
+    return int(r);
+}
+
+int ncs_DeallocateGraph(void* graphHandle) {
+    mvncStatus r = mvncDeallocateGraph(graphHandle);
+    return int(r);
+}

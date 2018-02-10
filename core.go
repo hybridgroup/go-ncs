@@ -49,10 +49,14 @@ const (
 	MyriadError = -11
 )
 
-// NCS
-type NCS struct {
-	// C.uintptr
-	p unsafe.Pointer
+// Stick
+type Stick struct {
+	deviceHandle unsafe.Pointer
+}
+
+// Graph
+type Graph struct {
+	graphHandle unsafe.Pointer
 }
 
 // GetDeviceName gets the name of the NCS stick at index.
@@ -63,21 +67,28 @@ func GetDeviceName(index int) (Status, string) {
 }
 
 // OpenDevice
-func OpenDevice(name string) *NCS {
+func OpenDevice(name string) (Status, *Stick) {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 
 	var deviceHandle unsafe.Pointer
 	ret := C.ncs_OpenDevice(cName, deviceHandle)
-	if ret == OK {
-		return &NCS{p: deviceHandle}
-	}
-	return &NCS{}
+	return Status(ret), &Stick{deviceHandle: deviceHandle}
 }
 
 // CloseDevice
-func (d *NCS) CloseDevice() error {
-	C.ncs_CloseDevice(d.p)
-	d.p = nil
+func (s *Stick) CloseDevice() error {
+	C.ncs_CloseDevice(s.deviceHandle)
+	s.deviceHandle = nil
 	return nil
+}
+
+func (s *Stick) AllocateGraph(graphData []byte) (Status, *Graph) {
+	var graphHandle unsafe.Pointer
+	ret := Status(C.ncs_AllocateGraph(s.deviceHandle, graphHandle, unsafe.Pointer(&graphData[0]), C.uint(len(graphData))))
+	return ret, &Graph{graphHandle: graphHandle}
+}
+
+func (g *Graph) DeallocateGraph() Status {
+	return Status(C.ncs_DeallocateGraph(g.graphHandle))
 }

@@ -21,11 +21,15 @@ func main() {
 
 	// open device
 	fmt.Println("Opening NCS device " + name + "...")
-	d := ncs.OpenDevice(name)
+	res, stick := ncs.OpenDevice(name)
+	if res != ncs.OK {
+		fmt.Printf("NCS Error: %v\n", res)
+		return
+	}
 
 	// close device
 	fmt.Println("Closing NCS device " + name + "...")
-	d.CloseDevice()
+	stick.CloseDevice()
 
 	fmt.Println("Done.")
 }
