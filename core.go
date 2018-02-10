@@ -49,9 +49,35 @@ const (
 	MyriadError = -11
 )
 
+// NCS
+type NCS struct {
+	// C.uintptr
+	p unsafe.Pointer
+}
+
 // GetDeviceName gets the name of the NCS stick at index.
 func GetDeviceName(index int) (Status, string) {
 	buf := make([]byte, 100)
 	ret := Status(C.ncs_GetDeviceName(C.int(index), (*C.char)(unsafe.Pointer(&buf[0]))))
 	return ret, string(buf)
+}
+
+// OpenDevice
+func OpenDevice(name string) *NCS {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+
+	var deviceHandle unsafe.Pointer
+	ret := C.ncs_OpenDevice(cName, deviceHandle)
+	if ret == OK {
+		return &NCS{p: deviceHandle}
+	}
+	return &NCS{}
+}
+
+// CloseDevice
+func (d *NCS) CloseDevice() error {
+	C.ncs_CloseDevice(d.p)
+	d.p = nil
+	return nil
 }

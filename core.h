@@ -11,6 +11,8 @@ extern "C" {
 #endif
 
 int ncs_GetDeviceName(int idx, char* name);
+int ncs_OpenDevice(const char* name, void* deviceHandle);
+int ncs_CloseDevice(void* deviceHandle);
 
 #ifdef __cplusplus
 }
