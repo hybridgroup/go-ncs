@@ -1,5 +1,6 @@
 package ncs
 
+// #cgo LDFLAGS: -lmvnc
 /*
 #include <stdlib.h>
 #include <core.h>
@@ -48,10 +49,9 @@ const (
 	MyriadError = -11
 )
 
-// GetDeviceName gets the first NCS stick
+// GetDeviceName gets the name of the NCS stick at index.
 func GetDeviceName(index int) (Status, string) {
 	buf := make([]byte, 100)
-	//var cRetValue *C.char
 	ret := Status(C.ncs_GetDeviceName(C.int(index), (*C.char)(unsafe.Pointer(&buf[0]))))
 	return ret, string(buf)
 }
