@@ -44,7 +44,7 @@ func main() {
 	}
 	defer s.CloseDevice()
 
-	// load precompiled graph file onto stick in NCS format
+	// load precompiled graph file in NCS format
 	data, err := ioutil.ReadFile(graphFileName)
 	if err != nil {
 		fmt.Println("Error opening graph file:", err)
@@ -60,10 +60,10 @@ func main() {
 	}
 	defer graph.DeallocateGraph()
 
-	// load image file
+	// load image file from disk
 	img := gocv.IMRead(imageFileName, gocv.IMReadColor)
 
-	// convert to format needed by NCS
+	// convert image to format needed by NCS
 	resized := gocv.NewMat()
 	gocv.Resize(img, resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
 
