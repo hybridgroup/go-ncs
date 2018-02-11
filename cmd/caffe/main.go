@@ -63,6 +63,15 @@ func main() {
 		return
 	}
 
+	// get result
+	resultStatus, data := graph.GetResult()
+	if resultStatus != ncs.StatusOK {
+		fmt.Println("Error getting results:", resultStatus)
+		return
+	}
+
+	fmt.Println(data)
+
 	// deallocate graph
 	fmt.Println("Deallocating graph...")
 	graph.DeallocateGraph()

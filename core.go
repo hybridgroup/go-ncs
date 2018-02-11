@@ -99,3 +99,11 @@ func (g *Graph) DeallocateGraph() Status {
 func (g *Graph) LoadTensor(tensorData []byte) Status {
 	return Status(C.ncs_LoadTensor(g.GraphHandle, unsafe.Pointer(&tensorData[0]), C.uint(len(tensorData))))
 }
+
+// GetResult
+func (g *Graph) GetResult() (Status, []byte) {
+	resultData := C.struct_ResultData{}
+	status := C.ncs_GetResult(g.GraphHandle, resultData)
+	data := C.GoBytes(unsafe.Pointer(resultData.data), C.int(resultData.length))
+	return Status(status), data
+}

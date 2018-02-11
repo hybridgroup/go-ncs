@@ -6,6 +6,11 @@
 
 #define NAME_SIZE 100
 
+typedef struct ResultData{
+  void* data;
+  uint length;
+} ResultData;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,6 +21,7 @@ int ncs_CloseDevice(void* deviceHandle);
 int ncs_AllocateGraph(void* deviceHandle, void** graphHandle, void* graphData, unsigned int graphDataLen);
 int ncs_DeallocateGraph(void* graphHandle);
 int ncs_LoadTensor(void* graphHandle, void* tensorData, unsigned int tensorDataLen);
+int ncs_GetResult(void* graphHandle, struct ResultData resultData);
 
 #ifdef __cplusplus
 }
