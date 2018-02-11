@@ -86,11 +86,16 @@ func (s *Stick) CloseDevice() Status {
 // AllocateGraph
 func (s *Stick) AllocateGraph(graphData []byte) (Status, *Graph) {
 	var graphHandle unsafe.Pointer
-	ret := Status(C.ncs_AllocateGraph(s.DeviceHandle, graphHandle, unsafe.Pointer(&graphData[0]), C.uint(len(graphData))))
+	ret := Status(C.ncs_AllocateGraph(s.DeviceHandle, &graphHandle, unsafe.Pointer(&graphData[0]), C.uint(len(graphData))))
 	return ret, &Graph{GraphHandle: graphHandle}
 }
 
 // DeallocateGraph
 func (g *Graph) DeallocateGraph() Status {
 	return Status(C.ncs_DeallocateGraph(g.GraphHandle))
+}
+
+// LoadTensor
+func (g *Graph) LoadTensor(tensorData []byte) Status {
+	return Status(C.ncs_LoadTensor(g.GraphHandle, unsafe.Pointer(&tensorData[0]), C.uint(len(tensorData))))
 }
