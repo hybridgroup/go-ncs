@@ -103,7 +103,7 @@ func (g *Graph) LoadTensor(tensorData []byte) Status {
 // GetResult
 func (g *Graph) GetResult() (Status, []byte) {
 	resultData := C.struct_ResultData{}
-	status := C.ncs_GetResult(g.GraphHandle, resultData)
+	status := C.ncs_GetResult(g.GraphHandle, &resultData)
 	data := C.GoBytes(unsafe.Pointer(resultData.data), C.int(resultData.length))
 	return Status(status), data
 }

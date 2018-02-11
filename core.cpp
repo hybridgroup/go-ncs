@@ -31,8 +31,8 @@ int ncs_LoadTensor(void* graphHandle, void* tensorData, unsigned int tensorDataL
     return int(r);
 }
 
-int ncs_GetResult(void* graphHandle, struct ResultData resultData) {
+int ncs_GetResult(void* graphHandle, ResultData* resultData) {
     void* userParam;
-    mvncStatus r = mvncGetResult(graphHandle, &resultData.data, &resultData.length, &userParam);
+    mvncStatus r = mvncGetResult(graphHandle, &(resultData->data), &(resultData->length), &userParam);
     return int(r);
 }
