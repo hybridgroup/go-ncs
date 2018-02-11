@@ -12,7 +12,7 @@ func main() {
 	deviceID, _ := strconv.Atoi(os.Args[1])
 
 	res, name := ncs.GetDeviceName(deviceID)
-	if res != ncs.OK {
+	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
 	}
@@ -22,7 +22,7 @@ func main() {
 	// open device
 	fmt.Println("Opening NCS device " + name + "...")
 	res, stick := ncs.OpenDevice(name)
-	if res != ncs.OK {
+	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
 	}
@@ -30,7 +30,7 @@ func main() {
 	// close device
 	fmt.Println("Closing NCS device " + name + "...")
 	res = stick.CloseDevice()
-	if res != ncs.OK {
+	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
 	}

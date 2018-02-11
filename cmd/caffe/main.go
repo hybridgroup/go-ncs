@@ -14,7 +14,7 @@ func main() {
 	graphFileName := os.Args[2]
 
 	res, name := ncs.GetDeviceName(deviceID)
-	if res != ncs.OK {
+	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
 	}
@@ -24,7 +24,7 @@ func main() {
 	// open device
 	fmt.Println("Opening NCS device " + name + "...")
 	status, s := ncs.OpenDevice(name)
-	if status != ncs.OK {
+	if status != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", status)
 		return
 	}
@@ -36,12 +36,11 @@ func main() {
 		fmt.Println("Error opening graph file:", err)
 		return
 	}
-	fmt.Println(len(data))
 
 	// allocate graph
 	fmt.Println("Allocating graph...")
 	allocateStatus, graph := s.AllocateGraph(data)
-	if allocateStatus != ncs.OK {
+	if allocateStatus != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", allocateStatus)
 		return
 	}

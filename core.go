@@ -12,41 +12,41 @@ import "unsafe"
 type Status int
 
 const (
-	// OK when the device is OK.
-	OK = 0
+	// StatusOK when the device is OK.
+	StatusOK = 0
 
-	// Busy means device is busy, retry later.
-	Busy = -1
+	// StatusBusy means device is busy, retry later.
+	StatusBusy = -1
 
-	// Error communicating with the device.
-	Error = -2
+	// StatusError communicating with the device.
+	StatusError = -2
 
-	// OutOfMemory means device out of memory.
-	OutOfMemory = -3
+	// StatusOutOfMemory means device out of memory.
+	StatusOutOfMemory = -3
 
-	// DeviceNotFound means no device at the given index or name.
-	DeviceNotFound = -4
+	// StatusDeviceNotFound means no device at the given index or name.
+	StatusDeviceNotFound = -4
 
-	// InvalidParameters when at least one of the given parameters is wrong.
-	InvalidParameters = -5
+	// StatusInvalidParameters when at least one of the given parameters is wrong.
+	StatusInvalidParameters = -5
 
-	// Timeout in the communication with the device.
-	Timeout = -6
+	// StatusTimeout in the communication with the device.
+	StatusTimeout = -6
 
-	// CmdNotFound means the file to boot Myriad was not found.
-	CmdNotFound = -7
+	// StatusCmdNotFound means the file to boot Myriad was not found.
+	StatusCmdNotFound = -7
 
-	// NoData means no data to return, call LoadTensor first.
-	NoData = -8
+	// StatusNoData means no data to return, call LoadTensor first.
+	StatusNoData = -8
 
-	// Gone means the graph or device has been closed during the operation.
-	Gone = -9
+	// StatusGone means the graph or device has been closed during the operation.
+	StatusGone = -9
 
-	// UnsupportedGraphFile means the graph file version is not supported.
-	UnsupportedGraphFile = -10
+	// StatusUnsupportedGraphFile means the graph file version is not supported.
+	StatusUnsupportedGraphFile = -10
 
-	// MyriadError when an error has been reported by the device, use MVNC_DEBUG_INFO.
-	MyriadError = -11
+	// StatusMyriadError when an error has been reported by the device, use MVNC_DEBUG_INFO.
+	StatusMyriadError = -11
 )
 
 // Stick
@@ -83,12 +83,14 @@ func (s *Stick) CloseDevice() Status {
 	return Status(res)
 }
 
+// AllocateGraph
 func (s *Stick) AllocateGraph(graphData []byte) (Status, *Graph) {
 	var graphHandle unsafe.Pointer
 	ret := Status(C.ncs_AllocateGraph(s.DeviceHandle, graphHandle, unsafe.Pointer(&graphData[0]), C.uint(len(graphData))))
 	return ret, &Graph{GraphHandle: graphHandle}
 }
 
+// DeallocateGraph
 func (g *Graph) DeallocateGraph() Status {
 	return Status(C.ncs_DeallocateGraph(g.GraphHandle))
 }
