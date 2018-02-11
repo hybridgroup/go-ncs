@@ -26,6 +26,7 @@ func main() {
 	imageFileName := os.Args[3]
 	descriptions, _ := readDescriptions(os.Args[4])
 
+	// get name of NCS stick
 	res, name := ncs.GetDeviceName(deviceID)
 	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
@@ -34,7 +35,7 @@ func main() {
 
 	fmt.Println("NCS: " + name)
 
-	// open device
+	// open NCS device
 	fmt.Println("Opening NCS device " + name + "...")
 	status, s := ncs.OpenDevice(name)
 	if status != ncs.StatusOK {
@@ -43,20 +44,21 @@ func main() {
 	}
 	defer s.CloseDevice()
 
-	// load graph file
+	// load precompiled graph file onto stick in NCS format
 	data, err := ioutil.ReadFile(graphFileName)
 	if err != nil {
 		fmt.Println("Error opening graph file:", err)
 		return
 	}
 
-	// allocate graph
+	// allocate graph on NCS stick
 	fmt.Println("Allocating graph...")
 	allocateStatus, graph := s.AllocateGraph(data)
 	if allocateStatus != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", allocateStatus)
 		return
 	}
+	defer graph.DeallocateGraph()
 
 	// load image file
 	img := gocv.IMRead(imageFileName, gocv.IMReadColor)
@@ -70,7 +72,7 @@ func main() {
 
 	fp16Blob := fp32Image.ConvertFp16()
 
-	// load tensor into graph
+	// load image tensor into graph on NCS stick
 	fmt.Println("Loading tensor...")
 	loadStatus := graph.LoadTensor(fp16Blob.ToBytes())
 	if loadStatus != ncs.StatusOK {
@@ -78,7 +80,7 @@ func main() {
 		return
 	}
 
-	// get result
+	// get result from NCS stick in fp16 format
 	resultStatus, data := graph.GetResult()
 	if resultStatus != ncs.StatusOK {
 		fmt.Println("Error getting results:", resultStatus)
@@ -91,11 +93,7 @@ func main() {
 
 	// determine the most probable classification
 	_, maxVal, _, maxLoc := gocv.MinMaxLoc(results)
-	fmt.Printf("description: %v %v, maxVal: %v\n", maxLoc, descriptions[maxLoc.X], maxVal)
-
-	// deallocate graph
-	fmt.Println("Deallocating graph...")
-	graph.DeallocateGraph()
+	fmt.Printf("description: %v, maxVal: %v\n", descriptions[maxLoc.X], maxVal)
 
 	fmt.Println("Done.")
 }
