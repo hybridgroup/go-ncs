@@ -29,7 +29,11 @@ func main() {
 
 	// close device
 	fmt.Println("Closing NCS device " + name + "...")
-	stick.CloseDevice()
+	res = stick.CloseDevice()
+	if res != ncs.OK {
+		fmt.Printf("NCS Error: %v\n", res)
+		return
+	}
 
 	fmt.Println("Done.")
 }

@@ -1,13 +1,13 @@
 #include "core.h"
+#include <stdio.h>
 
 int ncs_GetDeviceName(int idx, char* name) {
-    //char devName[NAME_SIZE];
     mvncStatus r = mvncGetDeviceName(idx, name, NAME_SIZE);
     return int(r);
 }
 
-int ncs_OpenDevice(const char* name, void* deviceHandle) {
-    mvncStatus r = mvncOpenDevice(name, &deviceHandle);
+int ncs_OpenDevice(const char* name, void** deviceHandle) {
+    mvncStatus r = mvncOpenDevice(name, deviceHandle);
     return int(r);
 }
 
@@ -16,7 +16,7 @@ int ncs_CloseDevice(void* deviceHandle) {
     return int(r);
 }
 
-int ncs_AllocateGraph(void* deviceHandle, void* graphHandle, void* graphData, uint graphDataLen) {
+int ncs_AllocateGraph(void* deviceHandle, void* graphHandle, void* graphData, unsigned int graphDataLen) {
     mvncStatus r = mvncAllocateGraph(deviceHandle, &graphHandle, graphData, graphDataLen);
     return int(r);
 }

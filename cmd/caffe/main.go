@@ -36,6 +36,7 @@ func main() {
 		fmt.Println("Error opening graph file:", err)
 		return
 	}
+	fmt.Println(len(data))
 
 	// allocate graph
 	fmt.Println("Allocating graph...")
@@ -46,7 +47,7 @@ func main() {
 	}
 
 	// deallocate graph
-	fmt.Println("Allocating graph...")
+	fmt.Println("Deallocating graph...")
 	graph.DeallocateGraph()
 
 	fmt.Println("Done.")
