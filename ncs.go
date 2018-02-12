@@ -2,8 +2,7 @@ package ncs
 
 // #cgo LDFLAGS: -lmvnc
 /*
-#include <stdlib.h>
-#include <core.h>
+#include <ncs.h>
 */
 import "C"
 import "unsafe"

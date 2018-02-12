@@ -1,4 +1,4 @@
-#include "core.h"
+#include "ncs.h"
 #include <stdio.h>
 
 int ncs_GetDeviceName(int idx, char* name) {
