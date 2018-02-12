@@ -6,18 +6,26 @@ You must have the Intel Movidius NCS hardware in order to use this package.
 
 ## Install
 
+### Install the Movidius Neural Compute SDK
+
 This package has only been tested on Ubuntu 16.04 LTS.
 
 First, install the Movidius Neural Compute SDK from https://github.com/movidius/ncsdk
 
-Once you have installed the SDK by following the instructions on the NCSDK repository using `make install` you can then download the compile the graph files for the Caffe GoogLeNet example by running the following commands:
+    git clone https://github.com/movidius/ncsdk.git
+    cd ncsdk
+    make install
+
+Once you have installed the SDK you can then download and compile the graph files for the Caffe GoogLeNet example by running the following commands:
 
     cd ./examples/caffe/GoogLeNet
     make prototxt
     make caffemodel
     make compile
 
-This will download and compile the NCS graph file needed to run the examples using `go-ncs`.
+This will download and compile the NCS graph file needed to run the `go-ncs` examples.
+
+### Install the go-ncs Go package
 
 Now you can install the go-ncs Go package:
 
