@@ -1,8 +1,8 @@
 # go-ncs
 
-## Go language bindings for the Movidius Neural Computer Stick
+This package contains Go language bindings for the Intel® Movidius™ Neural Compute Stick (NCS) [(https://developer.movidius.com/)](https://developer.movidius.com/).
 
-You must have a Movidius Neural Computer Stick (NCS) in order to use this package.
+You must have the Intel Movidius NCS hardware in order to use this package.
 
 ## Install
 
@@ -19,6 +19,12 @@ Once you have installed the SDK by following the instructions on the NCSDK repos
 
 This will download and compile the NCS graph file needed to run the examples using `go-ncs`.
 
+Now you can install the go-ncs Go package:
+
+    go get -d -u github.com/hybridgroup/go-ncs
+
+Once you have installed `go-ncs` you can use it just like any other Golang package.
+
 ## Using
 
 Here is a very simple example of opening/closing a connection to an NCS stick:
@@ -28,16 +34,12 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strconv"
 
 	ncs "github.com/hybridgroup/go-ncs"
 )
 
 func main() {
-	deviceID, _ := strconv.Atoi(os.Args[1])
-
-	res, name := ncs.GetDeviceName(deviceID)
+	res, name := ncs.GetDeviceName(0)
 	if res != ncs.StatusOK {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
@@ -60,17 +62,14 @@ func main() {
 		fmt.Printf("NCS Error: %v\n", res)
 		return
 	}
-
-	fmt.Println("Done.")
 }
 ```
 
-There are more examples in the `cmd` directory of this repository.
+There are several examples in the `cmd` directory of this repository.
 
 ## Using go-ncs with GoCV
 
 It is very useful to combine go-ncs with GoCV [(https://gocv.io)](https://gocv.io) to be able to use the video capture and processing abilities of GoCV along with the classification abilities of the NCS. Take a look at the `cmd\caffe` and `cmd\caffe-video` for examples.
-
 
 ## License
 
