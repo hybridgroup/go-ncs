@@ -65,10 +65,10 @@ func main() {
 
 	// convert image to format needed by NCS
 	resized := gocv.NewMat()
-	gocv.Resize(img, resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
+	gocv.Resize(img, &resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
 
 	fp32Image := gocv.NewMat()
-	resized.ConvertTo(fp32Image, gocv.MatTypeCV32F)
+	resized.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
 
 	fp16Blob := fp32Image.ConvertFp16()
 

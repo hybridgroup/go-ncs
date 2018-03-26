@@ -87,7 +87,7 @@ func main() {
 	statusColor := color.RGBA{0, 255, 0, 0}
 
 	for {
-		if ok := webcam.Read(img); !ok {
+		if ok := webcam.Read(&img); !ok {
 			fmt.Printf("Error cannot read device %d\n", deviceID)
 			return
 		}
@@ -96,8 +96,8 @@ func main() {
 		}
 
 		// convert image to format needed by NCS
-		gocv.Resize(img, resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
-		resized.ConvertTo(fp32Image, gocv.MatTypeCV32F)
+		gocv.Resize(img, &resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
+		resized.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
 		fp16Blob := fp32Image.ConvertFp16()
 
 		// load image tensor into graph on NCS stick
@@ -123,7 +123,7 @@ func main() {
 
 		// display classification
 		info := fmt.Sprintf("description: %v, maxVal: %v", descriptions[maxLoc.X], maxVal)
-		gocv.PutText(img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
+		gocv.PutText(&img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 
 		fp16Blob.Close()
 
