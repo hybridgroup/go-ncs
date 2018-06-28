@@ -1,6 +1,9 @@
 #ifndef _GONCS_H_
 #define _GONCS_H_
 
+#ifdef __APPLE__
+#include <sys/types.h>
+#endif // __APPLE__
 #include <stdlib.h>
 #include <mvnc.h>
 
