@@ -7,7 +7,6 @@
 // You must have OpenCV/GoCV installed to use this example.
 // Run the following commands:
 //
-// 	source $GOPATH/src/gocv.io/x/gocv/env.sh
 // 	go run ./cmd/caffe-video/main.go 0 0 ~/Development/ncsdk/examples/caffe/GoogLeNet/graph ~/Development/ncsdk/examples/data/ilsvrc12/synset_words.txt
 //
 package main
