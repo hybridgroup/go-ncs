@@ -115,7 +115,7 @@ func main() {
 		}
 
 		// convert results from fp16 back to float32
-		fp16Results := gocv.NewMatFromBytes(1, len(data)/2, gocv.MatTypeCV16S, data)
+		fp16Results, _ := gocv.NewMatFromBytes(1, len(data)/2, gocv.MatTypeCV16S, data)
 		results := fp16Results.ConvertFp16()
 
 		// determine the most probable classification
