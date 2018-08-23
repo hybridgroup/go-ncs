@@ -6,17 +6,33 @@ You must have the Intel Movidius NCS hardware in order to use this package.
 
 ## Install
 
-### Install the Movidius Neural Compute SDK
+This package has been tested on Ubuntu 16.04 LTS and macOS "El Capitan" and "High Sierra".
 
-This package has only been tested on Ubuntu 16.04 LTS.
+You must first install the NCSDK before you can use the Intel Movidius Myriad 2 Neural Compute Stick. The official SDK only supports Linux. However, the fork created by [@milosgajdos83](https://github.com/milosgajdos83) has some initial support for macOS. Sorry, no Windows yet.
 
-First, install the Movidius Neural Compute SDK from https://github.com/movidius/ncsdk
+### macOS
 
-    git clone https://github.com/movidius/ncsdk.git
+    brew install coreutils opencv libusb pkg-config wget
+    git clone https://github.com/milosgajdos83/ncsdk.git
     cd ncsdk
-    make install
+    git checkout macos-V1
+    cd api/src && sudo make basicinstall
 
-Once you have installed the SDK you can then download and compile the graph files for the Caffe GoogLeNet example by running the following commands:
+### Linux
+
+You must have OpenCV and GoCV installed in order to use the Movidius SDK with Go:
+
+https://gocv.io/getting-started/linux/
+
+Once they are installed, you can run the following commands:
+
+    git clone https://github.com/milosgajdos83/ncsdk.git
+    cd ncsdk
+    cd api/src && sudo make basicinstall
+
+## Compiling Models
+
+If on Linux, once you have installed the SDK you can then download and compile the graph files for the Caffe GoogLeNet example by running the following commands:
 
     cd ./examples/caffe/GoogLeNet
     make prototxt
