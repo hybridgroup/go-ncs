@@ -12,6 +12,8 @@ You must first install the NCSDK before you can use the Intel Movidius Myriad 2 
 
 ### macOS
 
+The macOS support for the NCSDK currently is only for the API, not the graph compiler or other tools. To install, run the following commands:
+
     brew install coreutils opencv libusb pkg-config wget
     git clone https://github.com/milosgajdos83/ncsdk.git
     cd ncsdk
@@ -28,7 +30,7 @@ Once they are installed, you can run the following commands:
 
     git clone https://github.com/milosgajdos83/ncsdk.git
     cd ncsdk
-    cd api/src && sudo make basicinstall
+    make install
 
 ## Compiling Models
 
