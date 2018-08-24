@@ -75,9 +75,6 @@ func main() {
 	img := gocv.NewMat()
 	defer img.Close()
 
-	resized := gocv.NewMat()
-	defer resized.Close()
-
 	rgbImg := gocv.NewMat()
 	defer rgbImg.Close()
 
@@ -96,7 +93,7 @@ func main() {
 		}
 
 		// resize and crop image so it fits
-		resized := getSquareImage(img, 299)
+		resized := resizeImage(img, 299)
 
 		// convert image to format needed by NCS graph
 		gocv.CvtColor(resized, &rgbImg, gocv.ColorBGRToRGB)
@@ -133,14 +130,15 @@ func main() {
 		_, maxVal, _, maxLoc := gocv.MinMaxLoc(results)
 
 		// display classification
-		desc := "none"
 		if maxLoc.X != -1 {
-			desc = descriptions[maxLoc.X+1]
+			desc := descriptions[maxLoc.X+1]
+			info := fmt.Sprintf("description: %v, maxVal: %v", desc, maxVal)
+			gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 		}
-		info := fmt.Sprintf("description: %v, maxVal: %v", desc, maxVal)
-		gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 
+		resized.Close()
 		fp16Blob.Close()
+		fp16Results.Close()
 		results.Close()
 
 		window.IMShow(img)
@@ -167,8 +165,8 @@ func readDescriptions(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-// getSquareImage resizes image so it maintains aspect ratio
-func getSquareImage(img gocv.Mat, tw int) gocv.Mat {
+// resizeImage resizes image so it maintains aspect ratio
+func resizeImage(img gocv.Mat, tw int) gocv.Mat {
 	width := float32(img.Cols())
 	height := float32(img.Rows())
 

@@ -77,9 +77,6 @@ func main() {
 	img := gocv.NewMat()
 	defer img.Close()
 
-	resized := gocv.NewMat()
-	defer resized.Close()
-
 	fp32Image := gocv.NewMat()
 	defer fp32Image.Close()
 
@@ -95,8 +92,9 @@ func main() {
 		}
 
 		// convert image to format needed by NCS
-		resized := getSquareImage(img, 224)
+		resized := resizeImage(img, 224)
 		resized.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
+
 		fp16Blob := fp32Image.ConvertFp16()
 
 		// load image tensor into graph on NCS stick
@@ -119,12 +117,16 @@ func main() {
 
 		// determine the most probable classification
 		_, maxVal, _, maxLoc := gocv.MinMaxLoc(results)
+		if maxLoc.X != -1 {
+			desc := descriptions[maxLoc.X]
+			info := fmt.Sprintf("description: %v, maxVal: %v", desc, maxVal)
+			gocv.PutText(&img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
+		}
 
-		// display classification
-		info := fmt.Sprintf("description: %v, maxVal: %v", descriptions[maxLoc.X], maxVal)
-		gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
-
+		resized.Close()
 		fp16Blob.Close()
+		fp16Results.Close()
+		results.Close()
 
 		window.IMShow(img)
 		if window.WaitKey(1) >= 0 {
@@ -150,8 +152,8 @@ func readDescriptions(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-// getSquareImage resizes image so it maintains aspect ratio
-func getSquareImage(img gocv.Mat, tw int) gocv.Mat {
+// resizeImage resizes image so it maintains aspect ratio
+func resizeImage(img gocv.Mat, tw int) gocv.Mat {
 	width := float32(img.Cols())
 	height := float32(img.Rows())
 
