@@ -77,9 +77,6 @@ func main() {
 	img := gocv.NewMat()
 	defer img.Close()
 
-	fp32Image := gocv.NewMat()
-	defer fp32Image.Close()
-
 	statusColor := color.RGBA{0, 255, 0, 0}
 
 	for {
@@ -91,14 +88,11 @@ func main() {
 			continue
 		}
 
-		// convert image to format needed by NCS
-		resized := resizeImage(img, 224)
-		resized.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
-
-		fp16Blob := fp32Image.ConvertFp16()
+		// convert image to half-float blob format needed by NCS
+		fp16data := gocv.FP16BlobFromImage(img, 1.0, image.Pt(224, 224), 0, false, false)
 
 		// load image tensor into graph on NCS stick
-		loadStatus := graph.LoadTensor(fp16Blob.ToBytes())
+		loadStatus := graph.LoadTensor(fp16data)
 		if loadStatus != ncs.StatusOK {
 			fmt.Println("Error loading tensor data:", loadStatus)
 			return
@@ -120,11 +114,9 @@ func main() {
 		if maxLoc.X != -1 {
 			desc := descriptions[maxLoc.X]
 			info := fmt.Sprintf("description: %v, maxVal: %v", desc, maxVal)
-			gocv.PutText(&img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
+			gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 		}
 
-		resized.Close()
-		fp16Blob.Close()
 		fp16Results.Close()
 		results.Close()
 
@@ -150,36 +142,4 @@ func readDescriptions(path string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
-}
-
-// resizeImage resizes image so it maintains aspect ratio
-func resizeImage(img gocv.Mat, tw int) gocv.Mat {
-	width := float32(img.Cols())
-	height := float32(img.Rows())
-
-	square := gocv.NewMatWithSize(tw, tw, img.Type())
-
-	maxDim := height
-	if width >= height {
-		maxDim = width
-	}
-
-	scale := float32(tw) / float32(maxDim)
-	var roi image.Rectangle
-	if width >= height {
-		roi.Min.X = 0
-		roi.Min.Y = int(float32(tw)-height*scale) / 2
-		roi.Max.X = tw
-		roi.Max.Y = int(height * scale)
-	} else {
-		roi.Min.X = int(float32(tw)-width*scale) / 2
-		roi.Min.Y = 0
-		roi.Max.X = int(width * scale)
-		roi.Max.Y = tw
-	}
-
-	square.Region(roi)
-	gocv.Resize(img, &square, roi.Max, 0, 0, gocv.InterpolationDefault)
-
-	return square
 }

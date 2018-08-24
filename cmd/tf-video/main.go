@@ -92,24 +92,11 @@ func main() {
 			continue
 		}
 
-		// resize and crop image so it fits
-		resized := resizeImage(img, 299)
-
-		// convert image to format needed by NCS graph
-		gocv.CvtColor(resized, &rgbImg, gocv.ColorBGRToRGB)
-		rgbImg.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
-
-		// subtract mean
-		fp32Image.SubtractFloat(128.0)
-
-		// multiply by scale factor
-		fp32Image.MultiplyFloat(1.0 / 128.0)
-
-		// convert to half-float
-		fp16Blob := fp32Image.ConvertFp16()
+		// convert image to half-float blob format needed by NCS
+		fp16data := gocv.FP16BlobFromImage(img, 1.0/128.0, image.Pt(299, 299), 128.0, true, false)
 
 		// load image tensor into graph on NCS stick
-		loadStatus := graph.LoadTensor(fp16Blob.ToBytes())
+		loadStatus := graph.LoadTensor(fp16data)
 		if loadStatus != ncs.StatusOK {
 			fmt.Println("Error loading tensor data:", loadStatus)
 			return
@@ -136,8 +123,6 @@ func main() {
 			gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 		}
 
-		resized.Close()
-		fp16Blob.Close()
 		fp16Results.Close()
 		results.Close()
 
@@ -163,36 +148,4 @@ func readDescriptions(path string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
-}
-
-// resizeImage resizes image so it maintains aspect ratio
-func resizeImage(img gocv.Mat, tw int) gocv.Mat {
-	width := float32(img.Cols())
-	height := float32(img.Rows())
-
-	square := gocv.NewMatWithSize(tw, tw, img.Type())
-
-	maxDim := height
-	if width >= height {
-		maxDim = width
-	}
-
-	scale := float32(tw) / float32(maxDim)
-	var roi image.Rectangle
-	if width >= height {
-		roi.Min.X = 0
-		roi.Min.Y = int(float32(tw)-height*scale) / 2
-		roi.Max.X = tw
-		roi.Max.Y = int(height * scale)
-	} else {
-		roi.Min.X = int(float32(tw)-width*scale) / 2
-		roi.Min.Y = 0
-		roi.Max.X = int(width * scale)
-		roi.Max.Y = tw
-	}
-
-	square.Region(roi)
-	gocv.Resize(img, &square, roi.Max, 0, 0, gocv.InterpolationDefault)
-
-	return square
 }
