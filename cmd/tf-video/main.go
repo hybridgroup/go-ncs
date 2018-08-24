@@ -138,7 +138,7 @@ func main() {
 			desc = descriptions[maxLoc.X+1]
 		}
 		info := fmt.Sprintf("description: %v, maxVal: %v", desc, maxVal)
-		gocv.PutText(&img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
+		gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 
 		fp16Blob.Close()
 		results.Close()

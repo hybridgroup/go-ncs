@@ -122,7 +122,7 @@ func main() {
 
 		// display classification
 		info := fmt.Sprintf("description: %v, maxVal: %v", descriptions[maxLoc.X], maxVal)
-		gocv.PutText(&img, info, image.Pt(10, 20), gocv.FontHersheyPlain, 1.2, statusColor, 2)
+		gocv.PutText(&img, info, image.Pt(10, img.Rows()/2), gocv.FontHersheyPlain, 1.2, statusColor, 2)
 
 		fp16Blob.Close()
 
