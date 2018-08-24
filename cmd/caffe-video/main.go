@@ -95,7 +95,7 @@ func main() {
 		}
 
 		// convert image to format needed by NCS
-		gocv.Resize(img, &resized, image.Pt(224, 224), 0, 0, gocv.InterpolationDefault)
+		resized := getSquareImage(img, 224)
 		resized.ConvertTo(&fp32Image, gocv.MatTypeCV32F)
 		fp16Blob := fp32Image.ConvertFp16()
 
@@ -148,4 +148,36 @@ func readDescriptions(path string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
+}
+
+// getSquareImage resizes image so it maintains aspect ratio
+func getSquareImage(img gocv.Mat, tw int) gocv.Mat {
+	width := float32(img.Cols())
+	height := float32(img.Rows())
+
+	square := gocv.NewMatWithSize(tw, tw, img.Type())
+
+	maxDim := height
+	if width >= height {
+		maxDim = width
+	}
+
+	scale := float32(tw) / float32(maxDim)
+	var roi image.Rectangle
+	if width >= height {
+		roi.Min.X = 0
+		roi.Min.Y = int(float32(tw)-height*scale) / 2
+		roi.Max.X = tw
+		roi.Max.Y = int(height * scale)
+	} else {
+		roi.Min.X = int(float32(tw)-width*scale) / 2
+		roi.Min.Y = 0
+		roi.Max.X = int(width * scale)
+		roi.Max.Y = tw
+	}
+
+	square.Region(roi)
+	gocv.Resize(img, &square, roi.Max, 0, 0, gocv.InterpolationDefault)
+
+	return square
 }
