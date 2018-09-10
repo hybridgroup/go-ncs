@@ -9,6 +9,8 @@
 
 #define NAME_SIZE 100
 
+typedef unsigned int uint;
+
 typedef struct ResultData{
   void* data;
   uint length;
